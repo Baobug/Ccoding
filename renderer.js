@@ -1,20 +1,68 @@
 // ============================================
 // Ccoding - 渲染进程（Renderer Process）
-// 职责：处理界面交互（按钮点击、显示结果）
+// 职责：初始化 Monaco 编辑器，处理新建 / 打开 / 保存
 // ============================================
 
-// 拿到界面上的「运行」按钮和「输出区」元素
-const runBtn = document.getElementById('run-btn');
-const output = document.getElementById('output');
+let editor = null;          // Monaco 编辑器实例
+let currentFilePath = null; // 当前文件路径（null 表示还没保存过）
 
-// 监听按钮的点击事件
-runBtn.addEventListener('click', () => {
-  // v0.0.1：先用一段固定文本，模拟「编译并运行」的效果
-  // 后续版本会真正调用 gcc 编译器，把这里替换成真实输出
-  output.textContent = [
-    '$ gcc main.c -o main',   // 模拟编译命令
-    '编译成功！',              // 模拟编译结果
-    '',
-    'Hello, World!',          // 模拟程序输出
-  ].join('\n');
+// 新用户默认看到的 C 代码模板
+const DEFAULT_CODE = [
+  '#include <stdio.h>',
+  '',
+  'int main() {',
+  '    printf("Hello, World!\\n");',
+  '    return 0;',
+  '}',
+  '',
+].join('\n');
+
+// 更新标题栏右侧显示的文件名
+function updateFileName(name) {
+  document.getElementById('file-name').textContent = name;
+}
+
+// 初始化 Monaco 编辑器
+require.config({ paths: { vs: './node_modules/monaco-editor/min/vs' } });
+
+require(['vs/editor/editor.main'], function () {
+  editor = monaco.editor.create(document.getElementById('editor'), {
+    value: DEFAULT_CODE,
+    language: 'c',              // C 语言语法高亮
+    theme: 'vs-light',          // 浅色主题
+    fontSize: 16,               // 大字号，教学 / 投影友好
+    automaticLayout: true,      // 窗口大小变化时自动调整布局
+    minimap: { enabled: false },// 关闭缩略图（教学场景用不上）
+    scrollBeyondLastLine: false,
+  });
+
+  updateFileName('未命名.c');
+});
+
+// ===== 新建：清空为默认模板 =====
+document.getElementById('btn-new').addEventListener('click', () => {
+  editor.setValue(DEFAULT_CODE);
+  currentFilePath = null;
+  updateFileName('未命名.c');
+});
+
+// ===== 打开：弹出对话框选择文件，读入编辑器 =====
+document.getElementById('btn-open').addEventListener('click', async () => {
+  const result = await window.ccoding.openFile();
+  if (result) {
+    editor.setValue(result.content);
+    currentFilePath = result.filePath;
+    updateFileName(result.filePath);
+  }
+});
+
+// ===== 保存：把编辑器内容写入文件 =====
+document.getElementById('btn-save').addEventListener('click', async () => {
+  const content = editor.getValue();
+  const defaultName = currentFilePath || 'main.c';
+  const savedPath = await window.ccoding.saveFile(content, defaultName);
+  if (savedPath) {
+    currentFilePath = savedPath;
+    updateFileName(savedPath);
+  }
 });

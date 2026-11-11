@@ -10,5 +10,8 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "electron": "^33.4.11"
+  },
+  "dependencies": {
+    "monaco-editor": "^0.57.0"
   }
 }

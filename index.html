@@ -2,63 +2,82 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <!-- 安全策略：只允许加载本地资源，防止注入外部脚本 -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+  <!-- 安全策略：允许本地资源 + Monaco 需要的 blob worker 和 data 字体 -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' data:; img-src 'self' data:">
   <title>Ccoding</title>
   <style>
-    /* 基础样式：让界面居中、清爽 */
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body { height: 100%; }
 
     body {
       font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-      background: #f5f6f8;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background: #f5f6f8;
     }
 
-    h1 { font-size: 30px; color: #1f2329; margin-bottom: 8px; }
-    .subtitle { color: #646a73; margin-bottom: 28px; }
+    /* 顶部工具栏 */
+    #toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e6eb;
+      flex-shrink: 0;
+    }
 
-    button {
+    .logo {
       font-size: 16px;
-      padding: 10px 36px;
-      border: none;
+      font-weight: 500;
+      color: #1f2329;
+      margin-right: 12px;
+    }
+
+    #toolbar button {
+      font-size: 14px;
+      padding: 6px 16px;
+      border: 1px solid #d0d3d9;
       border-radius: 6px;
-      background: #3370ff;
-      color: #ffffff;
+      background: #ffffff;
+      color: #1f2329;
       cursor: pointer;
     }
-    button:hover { background: #245bdb; }
+    #toolbar button:hover { background: #f2f3f5; }
 
-    /* 输出区：模拟终端，黑底绿字 */
-    #output {
-      margin-top: 28px;
-      width: 560px;
-      background: #1f2329;
-      color: #c8f0a0;
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 14px;
-      padding: 16px;
-      border-radius: 8px;
-      white-space: pre-wrap;  /* 保留换行 */
-      min-height: 100px;
+    #toolbar button.primary {
+      background: #3370ff;
+      border-color: #3370ff;
+      color: #ffffff;
     }
+    #toolbar button.primary:hover { background: #245bdb; }
+
+    #file-name {
+      margin-left: auto;
+      font-size: 13px;
+      color: #646a73;
+    }
+
+    /* 编辑器容器（占据剩余空间） */
+    #editor { flex: 1; min-height: 0; }
   </style>
 </head>
 <body>
-  <h1>Ccoding</h1>
-  <p class="subtitle">面向 C 语言教学的轻量编程工具 · v0.0.1</p>
+  <header id="toolbar">
+    <span class="logo">Ccoding</span>
+    <button id="btn-new">新建</button>
+    <button id="btn-open">打开</button>
+    <button id="btn-save" class="primary">保存</button>
+    <span id="file-name">未命名.c</span>
+  </header>
 
-  <!-- 运行按钮：点击后触发 renderer.js 里的逻辑 -->
-  <button id="run-btn">运行</button>
+  <!-- Monaco 编辑器挂载点 -->
+  <div id="editor"></div>
 
-  <!-- 输出区：显示"编译运行"的结果 -->
-  <div id="output">点击上方「运行」按钮，看看会发生什么。</div>
-
-  <!-- 引入渲染进程脚本 -->
-  <script src="renderer.js"></script>
+  <!-- Monaco 编辑器加载器（AMD） -->
+  <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
+  <!-- 应用逻辑 -->
+  <script src="./renderer.js"></script>
 </body>
 </html>

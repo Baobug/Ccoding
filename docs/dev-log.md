@@ -4,6 +4,14 @@
 
 ## 2026-11-11
 
+### v0.0.2 编辑器与文件操作（已完成）
+
+- 接入 Monaco 编辑器（npm 安装 `monaco-editor`，AMD loader 方式，延续无打包器决策）
+- 新增 `preload.js`（contextBridge 安全桥），`main.js` 加 `ipcMain.handle` 实现打开/保存文件
+- `index.html` 重构为工具栏 + 编辑器布局；`renderer.js` 初始化 Monaco + 绑定新建/打开/保存
+- 安全：`contextIsolation=true`、`nodeIntegration=false`、CSP 允许 blob worker 和 data 字体
+- 达成标准：窗口内显示 C 代码编辑器（语法高亮），可新建/打开/保存 `.c` 文件
+
 ### v0.0.1 起步（已完成）
 
 - 完成项目骨架：`package.json`、`.npmrc`（国内镜像）、`.gitignore`
