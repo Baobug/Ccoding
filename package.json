@@ -1,0 +1,14 @@
+{
+  "name": "ccoding",
+  "version": "0.0.1",
+  "description": "面向 C 语言教学的轻量编程工具（DEV-C++ 的现代替代品）",
+  "main": "main.js",
+  "scripts": {
+    "start": "node start.js"
+  },
+  "author": "Baobug",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "electron": "^33.4.11"
+  }
+}
