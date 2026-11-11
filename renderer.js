@@ -66,3 +66,52 @@ document.getElementById('btn-save').addEventListener('click', async () => {
     updateFileName(savedPath);
   }
 });
+
+// ===== 编译并运行 =====
+const outputPanel = document.getElementById('output-panel');
+const outputPre = document.getElementById('output');
+const outputStatus = document.getElementById('output-status');
+
+// 显示输出面板，并根据结果类型标记状态
+function showOutput(text, kind) {
+  outputPanel.style.display = 'flex';
+  outputPre.textContent = text;
+  if (kind === 'success') {
+    outputStatus.textContent = '运行成功';
+    outputStatus.className = 'ok';
+  } else if (kind === 'error') {
+    outputStatus.textContent = '编译失败';
+    outputStatus.className = 'err';
+  } else {
+    outputStatus.textContent = '';
+    outputStatus.className = '';
+  }
+}
+
+document.getElementById('btn-run').addEventListener('click', async () => {
+  if (!editor) return; // 编辑器还没初始化好，忽略点击
+  const code = editor.getValue();
+
+  outputPanel.style.display = 'flex';
+  outputStatus.textContent = '编译运行中…';
+  outputStatus.className = '';
+  outputPre.textContent = '正在编译运行，请稍候…';
+
+  const result = await window.ccoding.compileRun(code);
+
+  if (!result.success) {
+    showOutput(result.compileOutput || result.error, 'error');
+  } else {
+    const compileInfo = result.compileOutput ? '编译输出：\n' + result.compileOutput + '\n\n' : '';
+    const runInfo = result.runOutput || '（程序无输出）';
+    showOutput(compileInfo + '运行输出：\n' + runInfo, 'success');
+  }
+});
+
+// 清空 / 收起输出面板
+document.getElementById('btn-clear-output').addEventListener('click', () => {
+  outputPre.textContent = '';
+  outputStatus.textContent = '';
+  outputStatus.className = '';
+  outputPanel.style.display = 'none';
+});

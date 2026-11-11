@@ -14,4 +14,7 @@ contextBridge.exposeInMainWorld('ccoding', {
 
   // 保存文件：弹出系统对话框，写入内容，返回保存路径或 null（取消）
   saveFile: (content, defaultName) => ipcRenderer.invoke('save-file', content, defaultName),
+
+  // 编译并运行：把代码发给主进程，编译运行后返回 { success, compileOutput, runOutput }
+  compileRun: (code) => ipcRenderer.invoke('compile-run', code),
 });

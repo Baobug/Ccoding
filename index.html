@@ -53,6 +53,13 @@
     }
     #toolbar button.primary:hover { background: #245bdb; }
 
+    #toolbar button.run {
+      background: #00b578;
+      border-color: #00b578;
+      color: #ffffff;
+    }
+    #toolbar button.run:hover { background: #009a66; }
+
     #file-name {
       margin-left: auto;
       font-size: 13px;
@@ -61,6 +68,59 @@
 
     /* 编辑器容器（占据剩余空间） */
     #editor { flex: 1; min-height: 0; }
+
+    /* 输出面板 */
+    #output-panel {
+      display: none;
+      flex-direction: column;
+      height: 200px;
+      background: #1f2329;
+      flex-shrink: 0;
+      border-top: 1px solid #e5e6eb;
+    }
+
+    #output-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 16px;
+      font-size: 13px;
+      color: #646a73;
+      background: #f2f3f5;
+      border-bottom: 1px solid #e5e6eb;
+    }
+
+    #output-header .title { font-weight: 500; color: #1f2329; }
+
+    #output-status { margin-left: 8px; }
+    #output-status.ok { color: #00b578; }
+    #output-status.err { color: #ff4d4f; }
+
+    #output-header button.mini {
+      margin-left: auto;
+      font-size: 12px;
+      padding: 2px 10px;
+      border: 1px solid #d0d3d9;
+      border-radius: 4px;
+      background: #ffffff;
+      color: #1f2329;
+      cursor: pointer;
+    }
+    #output-header button.mini:hover { background: #e8eaed; }
+
+    #output {
+      flex: 1;
+      margin: 0;
+      padding: 10px 16px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      background: #1f2329;
+      color: #e8eaed;
+    }
   </style>
 </head>
 <body>
@@ -69,11 +129,22 @@
     <button id="btn-new">新建</button>
     <button id="btn-open">打开</button>
     <button id="btn-save" class="primary">保存</button>
+    <button id="btn-run" class="run">编译运行</button>
     <span id="file-name">未命名.c</span>
   </header>
 
   <!-- Monaco 编辑器挂载点 -->
   <div id="editor"></div>
+
+  <!-- 输出面板 -->
+  <div id="output-panel">
+    <div id="output-header">
+      <span class="title">输出</span>
+      <span id="output-status"></span>
+      <button id="btn-clear-output" class="mini">清空</button>
+    </div>
+    <pre id="output"></pre>
+  </div>
 
   <!-- Monaco 编辑器加载器（AMD） -->
   <script src="./node_modules/monaco-editor/min/vs/loader.js"></script>

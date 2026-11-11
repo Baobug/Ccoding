@@ -4,6 +4,15 @@
 
 ## 2026-11-11
 
+### v0.0.3 编译运行（已完成）
+
+- 接入真实 gcc 编译：`main.js` 新增 `compile-run` IPC，写临时源码 → 编译 → 运行 → 返回输出
+- `findGcc()` 智能查找编译器：系统 PATH → 项目自带 `tools/mingw64` → 常见目录 → winget 包目录
+- 编译参数 `-finput-charset=UTF-8 -fexec-charset=UTF-8 -Wall`（UTF-8 编码 + 常见警告）
+- 运行 10 秒超时保护，防止学生写死循环 `while(1)` 卡死界面
+- 界面新增「编译运行」按钮 + 底部输出面板（成功绿色 / 失败红色）
+- 编译器：WinLibs MinGW-w64 GCC 16.2.0（POSIX UCRT），内置 `tools/mingw64`（项目自包含，已 gitignore）
+
 ### v0.0.2 编辑器与文件操作（已完成）
 
 - 接入 Monaco 编辑器（npm 安装 `monaco-editor`，AMD loader 方式，延续无打包器决策）

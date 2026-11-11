@@ -1,6 +1,9 @@
 # 依赖目录（体积大，不提交）
 node_modules/
 
+# 内置编译器（体积大，不提交；可选放置 MinGW-w64 到 tools/mingw64）
+tools/
+
 # 打包产物
 dist/
 out/
