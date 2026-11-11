@@ -12,6 +12,8 @@
 - 运行 10 秒超时保护，防止学生写死循环 `while(1)` 卡死界面
 - 界面新增「编译运行」按钮 + 底部输出面板（成功绿色 / 失败红色）
 - 编译器：WinLibs MinGW-w64 GCC 16.2.0（POSIX UCRT），内置 `tools/mingw64`（项目自包含，已 gitignore）
+- 验证：命令行端到端测试通过（Hello World + 编译错误定位），用户确认「编译正常」
+- 提交：`c9dd5c2`，已推送 GitHub 成功
 
 ### v0.0.2 编辑器与文件操作（已完成）
 
@@ -34,6 +36,18 @@
 - 现象：`npm start` 报 `app.whenReady is not a function`，`require('electron')` 返回路径字符串而非 API
 - 根因：WorkBuddy（Electron 应用）向子进程注入 `ELECTRON_RUN_AS_NODE=1`，让 electron.exe 以纯 Node 模式运行
 - 修复：`start.js` 里 `delete process.env.ELECTRON_RUN_AS_NODE` 后再 spawn Electron
+
+### 踩坑记录：WinLibs 编译器下载与解压（2026-11-11）
+
+- winget 装 WinLibs 因托管 GitHub、国内直连慢（12 分钟才下 262MB），最终改用户手动下载 zip 更快
+- 文件名认准 `posix` + `seh`（易误写成 she）+ `ucrt` + `x86_64`，格式选 `.zip`（Windows 自带解压，`.7z` 需额外装 7-Zip）
+- Git Bash 自带的 GNU tar 不支持 zip，解压用系统 `C:\Windows\System32\tar.exe -xf`
+- `execSync('where gcc')` 默认把 stderr 转发到父进程，找不到编译器时会泄漏「信息: 用提供的模式无法找到文件」乱码；加 `stdio: ['ignore', 'pipe', 'ignore']` 消除
+
+### 踩坑记录：git push 代理 502
+
+- 现象：`git push` 持续失败（代理隧道 502 / Empty reply / schannel handshake）
+- 修复：`GIT_SSL_NO_VERIFY=true git push origin main` 一次成功
 
 ### 项目立项背景（回顾）
 
